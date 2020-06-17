@@ -66,26 +66,26 @@ public class McCommandDiscord implements ICommand
                             else sender.sendMessage(new TextComponentString(TextFormatting.RED + "Failed to properly restart the discord bot!"));
                         }).start();
                         return;
-                    case "link":
-                        new Thread(() -> {
-                        if (Configuration.LINKING.DISCORD_LINKING_ENABLED && DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) {
-                            if (PlayerLinkController.isPlayerLinked(((EntityPlayer)sender).getUniqueID())) {
-                                sender.sendMessage(new TextComponentString(TextFormatting.RED + "You are already linked with " + PlayerLinkController.getDiscordFromPlayer(((EntityPlayer)sender).getUniqueID())));
-                                return;
-                            }
-                            final int r = DiscordIntegration.discord_instance.genLinkNumber(((EntityPlayer)sender).getUniqueID());
-                                sender.sendMessage(new TextComponentString("Send this number as an direct message to the bot to link your account: " + r + "\nThis number will expire after 10 minutes").setStyle(new Style().setColor(TextFormatting.AQUA)));
-                        } else {
-                            sender.sendMessage(new TextComponentString(TextFormatting.RED + "This subcommand is disabled!"));
-                        }
-                        }).start();
-                        return;
                     default:
                     sender.sendMessage(new TextComponentString(TextFormatting.RED + "Invalid subcommand!"));
                     break;
                 }
             }
             switch (args[0]) {
+                case "link":
+                    new Thread(() -> {
+                    if (Configuration.LINKING.DISCORD_LINKING_ENABLED && DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) {
+                        if (PlayerLinkController.isPlayerLinked(((EntityPlayer)sender).getUniqueID())) {
+                            sender.sendMessage(new TextComponentString(TextFormatting.RED + "You are already linked with " + PlayerLinkController.getDiscordFromPlayer(((EntityPlayer)sender).getUniqueID())));
+                            return;
+                        }
+                        final int r = DiscordIntegration.discord_instance.genLinkNumber(((EntityPlayer)sender).getUniqueID());
+                            sender.sendMessage(new TextComponentString("Send this number as an direct message to the bot to link your account: " + r + "\nThis number will expire after 10 minutes").setStyle(new Style().setColor(TextFormatting.AQUA)));
+                    } else {
+                        sender.sendMessage(new TextComponentString(TextFormatting.RED + "This subcommand is disabled!"));
+                    }
+                    }).start();
+                    return;
                 case "ignore":
                     sender.sendMessage(
                             new TextComponentString(DiscordIntegration.discord_instance.togglePlayerIgnore((EntityPlayer) sender) ? Configuration.DISCORD_COMMAND.IGNORECMD_UNIGNORE : Configuration.DISCORD_COMMAND.IGNORECMD_IGNORE));
