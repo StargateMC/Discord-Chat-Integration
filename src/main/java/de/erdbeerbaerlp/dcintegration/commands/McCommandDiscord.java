@@ -2,6 +2,7 @@ package de.erdbeerbaerlp.dcintegration.commands;
 
 import de.erdbeerbaerlp.dcintegration.Configuration;
 import de.erdbeerbaerlp.dcintegration.DiscordIntegration;
+import java.de.erdbeerbaerlp.dcintegration.linking.PlayerLinkController;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +15,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,18 @@ public class McCommandDiscord implements ICommand
                             }
                             else sender.sendMessage(new TextComponentString(TextFormatting.RED + "Failed to properly restart the discord bot!"));
                         }).start();
+                        return;
+                    case "link":
+                        if (Configuration.LINKING.DISCORD_LINKING_ENABLED && DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) {
+                            if (PlayerLinkController.isPlayerLinked(((EntityPlayer)sender).getUniqueID())) {
+                                sender.sendMessage(new TextComponentString(TextFormatting.RED + "You are already linked with " + PlayerLinkController.getDiscordFromPlayer(((EntityPlayer)sender).getUniqueID())));
+                                return;
+                            }
+                            final int r = DiscordIntegration.discord_instance.genLinkNumber(((EntityPlayer)sender).getUniqueID());
+                                sender.sendMessage(new TextComponentString("Send this number as an direct message to the bot to link your account: " + r + "\nThis number will expire after 10 minutes").setStyle(new Style().setColor(TextFormatting.AQUA).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, r + "")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to copy number to clipboard")))));
+                        } else {
+                            sender.sendMessage(new TextComponentString(TextFormatting.RED + "This subcommand is disabled!"));
+                        }
                         return;
                     default:
                         break;

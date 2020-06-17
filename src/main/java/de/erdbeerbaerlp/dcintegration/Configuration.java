@@ -17,6 +17,8 @@ public class Configuration {
     @Name("Advanced")
     @Comment("Configure Advanced features like moving specific message types to different channels")
     public static category_advanced ADVANCED = new category_advanced();
+    @Name("Linking")
+    public static category_linking LINKING = new category_linking();
     @Name("Webhook")
     @Comment("Webhook configuration")
     public static category_webhook WEBHOOK = new category_webhook();
@@ -28,7 +30,7 @@ public class Configuration {
     @Comment("Configurate the /discord command useable ingame")
     public static Configuration.discord_command DISCORD_COMMAND = new Configuration.discord_command();
     @Name("FTB Utilities")
-    @Comment("Theese config values will only be used when FTB Utilities is installed!")
+    @Comment("These config values will only be used when FTB Utilities is installed!")
     public static category_ftbutilities FTB_UTILITIES = new category_ftbutilities();
     @Name("Votifier")
     @Comment("Configure votifier integration here")
@@ -53,6 +55,13 @@ public class Configuration {
         public int DESCRIPTION_UPDATE_DELAY = 500;
     }
 
+    public static class category_linking {
+        @Comment({"Role ID players receive when they are discord linked", "Leave empty to not provide a role"})
+        public String DISCORD_LINKED_ROLE_ID = "";
+        @Comment({"Is linking enabled?", "Set to false if not!"})
+        public boolean DISCORD_LINKING_ENABLED = false;
+    }
+    
     public static class category_advanced {
         @Comment({"Custom channel ID for server specific messages (like Join/leave)", "Leave empty to use default channel"})
         public String SERVER_CHANNEL_ID = "";

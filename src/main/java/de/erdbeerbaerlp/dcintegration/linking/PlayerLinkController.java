@@ -2,6 +2,7 @@ package java.de.erdbeerbaerlp.dcintegration.linking;
 
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
+import de.erdbeerbaerlp.dcintegration.Configuration;
 import de.erdbeerbaerlp.dcintegration.DiscordIntegration;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.util.UUID;
 
 import static de.erdbeerbaerlp.dcintegration.DiscordIntegration.discord_instance;
+import static de.erdbeerbaerlp.dcintegration.Configuration.*;
 
 public class PlayerLinkController {
     private static final File playerLinkedFile = new File("./linkedPlayers.json");
@@ -117,7 +119,7 @@ public class PlayerLinkController {
             saveJSON(a);
             //onPlayerLink is here
             final Guild guild = discord_instance.getChannel().getGuild();
-            final Role linkedRole = guild.getRoleById("541757653932834827");
+            final Role linkedRole = guild.getRoleById(Configuration.LINKING.DISCORD_LINKED_ROLE_ID);
             final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(link.mcPlayerUUID))));
             if (!member.getRoles().contains(linkedRole))
                 guild.addRoleToMember(member, linkedRole).queue();
@@ -175,7 +177,7 @@ public class PlayerLinkController {
                         gson.toJson(json, writer);
                     }
                     final Guild guild = discord_instance.getChannel().getGuild();
-                    final Role linkedRole = guild.getRoleById("541757653932834827");
+                    final Role linkedRole = guild.getRoleById(Configuration.LINKING.DISCORD_LINKED_ROLE_ID);
                     final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(o.mcPlayerUUID))));
                     if (member.getRoles().contains(linkedRole))
                         guild.removeRoleFromMember(member, linkedRole).queue();
