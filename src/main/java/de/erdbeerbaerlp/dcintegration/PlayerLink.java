@@ -1,4 +1,4 @@
-package java.de.erdbeerbaerlp.dcintegration.linkhandlers;
+package java.de.erdbeerbaerlp.dcintegration;
 
 public class PlayerLink {
     public String discordID = "";

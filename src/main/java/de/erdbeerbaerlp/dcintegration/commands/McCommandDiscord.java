@@ -2,7 +2,7 @@ package de.erdbeerbaerlp.dcintegration.commands;
 
 import de.erdbeerbaerlp.dcintegration.Configuration;
 import de.erdbeerbaerlp.dcintegration.DiscordIntegration;
-import java.de.erdbeerbaerlp.dcintegration.linkhandlers.PlayerLinkController;
+import java.de.erdbeerbaerlp.dcintegration.PlayerLinkController;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
