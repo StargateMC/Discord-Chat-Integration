@@ -50,8 +50,8 @@ import java.util.stream.LongStream;
 import net.minecraftforge.common.DimensionManager;
 
 import static de.erdbeerbaerlp.dcintegration.Configuration.*;
-import java.de.erdbeerbaerlp.dcintegration.PlayerLinkController;
-import java.de.erdbeerbaerlp.dcintegration.PlayerSettings;
+import de.erdbeerbaerlp.dcintegration.links.PlayerLinkController;
+import de.erdbeerbaerlp.dcintegration.links.PlayerSettings;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;

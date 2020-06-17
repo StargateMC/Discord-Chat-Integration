@@ -1,4 +1,4 @@
-package java.de.erdbeerbaerlp.dcintegration;
+package de.erdbeerbaerlp.dcintegration.links;
 
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
