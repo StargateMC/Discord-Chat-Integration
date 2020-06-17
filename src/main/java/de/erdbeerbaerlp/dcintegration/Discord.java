@@ -50,11 +50,15 @@ import java.util.stream.LongStream;
 import net.minecraftforge.common.DimensionManager;
 
 import static de.erdbeerbaerlp.dcintegration.Configuration.*;
+import de.erdbeerbaerlp.dcintegration.links.PlayerLink;
 import de.erdbeerbaerlp.dcintegration.links.PlayerLinkController;
 import de.erdbeerbaerlp.dcintegration.links.PlayerSettings;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 
 public class Discord implements EventListener {
@@ -127,6 +131,30 @@ public class Discord implements EventListener {
                     for (int i : remove)
                         pendingLinks.remove(i);
                     sleep(/*GENERAL.DESCRIPTION_UPDATE_DELAY*/TimeUnit.MINUTES.toMillis(10));
+                    final Guild guild = getChannel().getGuild();
+                    for (PlayerLink l : PlayerLinkController.getAllLinks()) {
+                        Member m = guild.getMemberById(l.discordID);
+                        String name = PlayerLinkController.getNameFromUUID(UUID.fromString(l.mcPlayerUUID));
+                        if (m != null && name != null && m.getNickname().equals(name)) {
+                                AuditableRestAction<Void> modifyNickname = m.modifyNickname(name);
+                                modifyNickname.complete();
+                                RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
+                                PrivateChannel complete = openPrivateChannel.complete();
+                                MessageAction sendMessage = complete.sendMessage("Your nickname on our discord server has been updated to " + name + ", which is what Mojang are reporting as your current IGN.");
+                                sendMessage.complete();
+                        } else {
+                            if (m == null || name == null) {
+                                PlayerLinkController.unlinkPlayer(l.discordID, UUID.fromString(l.mcPlayerUUID));
+                                if (m != null) {
+                                    RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
+                                    PrivateChannel complete = openPrivateChannel.complete();
+                                    MessageAction sendMessage = complete.sendMessage("Your Discord account has been unlinked from your Minecraft one in-game, as the server can no longer resolve your UUID. You may re-link again in-game.");
+                                    sendMessage.complete();
+                                }
+                            }
+                        }
+                    }
+                            
                 }
             } catch (InterruptedException | RuntimeException ignored) {
             }
@@ -660,6 +688,16 @@ public class Discord implements EventListener {
                         if (e.getImage() != null && !e.getImage().getProxyUrl().isEmpty())
                             message.append("Image: ").append(e.getImage().getProxyUrl()).append("\n");
                         message.append("\n-----------------");
+                    }
+                    Member m = ev.getMember();
+                    if (!PlayerLinkController.isDiscordLinked(m.getId()) && !ev.getChannel().getId().equals("722807188204290078")) {
+                        RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
+                        PrivateChannel complete = openPrivateChannel.complete();
+                        MessageAction sendMessage = complete.sendMessage("You must link your Minecraft account to discord in order to chat outside of the #unverified channel.\nYou can do this by typing /discord link while logged into the Minecraft server StargateMC.com and privately messaging me (the bot) the code you are provided within 10 minutes.");
+                        sendMessage.complete();
+                        AuditableRestAction<Void> deleteMessageById = ev.getChannel().deleteMessageById(ev.getMessageId());
+                        deleteMessageById.complete();
+                        return;
                     }
                     sendMcMsg(ForgeHooks.newChatWithLinks(Configuration.MESSAGES.INGAME_DISCORD_MSG.replace("%user%", (ev.getMember() != null ? ev.getMember().getEffectiveName() : ev.getAuthor().getName()))
                             .replace("%id%", ev.getAuthor().getId()).replace("%msg%", (Configuration.MESSAGES.PREVENT_MC_COLOR_CODES ? DiscordIntegration

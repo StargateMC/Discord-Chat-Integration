@@ -48,6 +48,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import static de.erdbeerbaerlp.dcintegration.Configuration.ADVANCED;
+import de.erdbeerbaerlp.dcintegration.links.PlayerLinkController;
 
 
 @Mod(modid = DiscordIntegration.MODID, version = DiscordIntegration.VERSION, name = DiscordIntegration.NAME, serverSideOnly = true, acceptableRemoteVersions = "*",
