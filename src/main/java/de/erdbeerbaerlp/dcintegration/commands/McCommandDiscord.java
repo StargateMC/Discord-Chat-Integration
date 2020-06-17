@@ -74,7 +74,7 @@ public class McCommandDiscord implements ICommand
                                 return;
                             }
                             final int r = DiscordIntegration.discord_instance.genLinkNumber(((EntityPlayer)sender).getUniqueID());
-                                sender.sendMessage(new TextComponentString("Send this number as an direct message to the bot to link your account: " + r + "\nThis number will expire after 10 minutes").setStyle(new Style().setColor(TextFormatting.AQUA).setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, r + "")).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to copy number to clipboard")))));
+                                sender.sendMessage(new TextComponentString("Send this number as an direct message to the bot to link your account: " + r + "\nThis number will expire after 10 minutes").setStyle(new Style().setColor(TextFormatting.AQUA)));
                         } else {
                             sender.sendMessage(new TextComponentString(TextFormatting.RED + "This subcommand is disabled!"));
                         }
