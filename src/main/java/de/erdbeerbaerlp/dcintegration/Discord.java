@@ -46,12 +46,31 @@ import java.util.regex.Pattern;
 import java.util.stream.LongStream;
 
 import static de.erdbeerbaerlp.dcintegration.Configuration.*;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
+import javafx.animation.KeyValue;
 
 
 public class Discord implements EventListener {
     public final JDA jda;
     public boolean isKilled = false;
     public ArrayList<String> ignoringPlayers = new ArrayList<>();
+    private final HashMap<Integer, KeyValue<>> pendingLinks = new HashMap<>();
+    
+    public int genLinkNumber(UUID uniqueID) {
+        final AtomicInteger r = new AtomicInteger(-1);
+        pendingLinks.forEach((k, v) -> {
+            if (v.getValue().equals(uniqueID))
+                r.set(k);
+        });
+        if (r.get() != -1) return r.get();
+        do {
+            r.set(new Random().nextInt(Integer.MAX_VALUE));
+        } while (pendingLinks.containsKey(r.get()));
+        pendingLinks.put(r.get(), new DefaultKeyValue<>(Instant.now(), uniqueID));
+        return r.get();
+    }
+    
     /**
      * This thread is used to update the channel description
      */
@@ -91,6 +110,15 @@ public class Discord implements EventListener {
                         (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? getChannelManager() : getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(newDesc).complete();
                         cachedDescription = newDesc;
                     }
+                    // Removing of expired numbers
+                    final ArrayList<Integer> remove = new ArrayList<>();
+                    pendingLinks.forEach((k, v) -> {
+                        final Instant now = Instant.now();
+                        Duration d = Duration.between(v.getKey(), now);
+                        if (d.toMinutes() > 10) remove.add(k);
+                    });
+                    for (int i : remove)
+                        pendingLinks.remove(i);
                     sleep(/*GENERAL.DESCRIPTION_UPDATE_DELAY*/TimeUnit.MINUTES.toMillis(10));
                 }
             } catch (InterruptedException | RuntimeException ignored) {
