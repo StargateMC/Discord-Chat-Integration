@@ -67,6 +67,7 @@ public class McCommandDiscord implements ICommand
                         }).start();
                         return;
                     case "link":
+                        new Thread(() -> {
                         if (Configuration.LINKING.DISCORD_LINKING_ENABLED && DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) {
                             if (PlayerLinkController.isPlayerLinked(((EntityPlayer)sender).getUniqueID())) {
                                 sender.sendMessage(new TextComponentString(TextFormatting.RED + "You are already linked with " + PlayerLinkController.getDiscordFromPlayer(((EntityPlayer)sender).getUniqueID())));
@@ -77,9 +78,11 @@ public class McCommandDiscord implements ICommand
                         } else {
                             sender.sendMessage(new TextComponentString(TextFormatting.RED + "This subcommand is disabled!"));
                         }
+                        }).start();
                         return;
                     default:
-                        break;
+                    sender.sendMessage(new TextComponentString(TextFormatting.RED + "Invalid subcommand!"));
+                    break;
                 }
             }
             switch (args[0]) {
