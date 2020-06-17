@@ -135,7 +135,7 @@ public class Discord implements EventListener {
                     for (PlayerLink l : PlayerLinkController.getAllLinks()) {
                         Member m = guild.getMemberById(l.discordID);
                         String name = PlayerLinkController.getNameFromUUID(UUID.fromString(l.mcPlayerUUID));
-                        if (m != null && name != null && m.getNickname().equals(name)) {
+                        if (m != null && name != null && !m.getNickname().equals(name)) {
                                 AuditableRestAction<Void> modifyNickname = m.modifyNickname(name);
                                 modifyNickname.complete();
                                 RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
@@ -690,7 +690,7 @@ public class Discord implements EventListener {
                         message.append("\n-----------------");
                     }
                     Member m = ev.getMember();
-                    if (!PlayerLinkController.isDiscordLinked(m.getId()) && !ev.getChannel().getId().equals("722807188204290078")) {
+                    if (!PlayerLinkController.isDiscordLinked(m.getId()) && ev.getChannel().getId().equals(Configuration.GENERAL.CHANNEL_ID)) {
                         RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
                         PrivateChannel complete = openPrivateChannel.complete();
                         MessageAction sendMessage = complete.sendMessage("You must link your Minecraft account to discord in order to chat outside of the #unverified channel.\nYou can do this by typing /discord link while logged into the Minecraft server StargateMC.com and privately messaging me (the bot) the code you are provided within 10 minutes.");
