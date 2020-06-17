@@ -3,11 +3,10 @@ package java.de.erdbeerbaerlp.dcintegration.linking;
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import de.erdbeerbaerlp.dcintegration.DiscordIntegration;
-import de.erdbeerbaerlp.dcintegration.api.DiscordEventHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
 import javax.management.openmbean.KeyAlreadyExistsException;
@@ -22,7 +21,7 @@ public class PlayerLinkController {
     private static final JsonParser parser = new JsonParser();
 
     public static boolean isPlayerLinked(UUID player) throws IllegalStateException {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return false;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         try {
             for (JsonElement e : getJson()) {
                 final PlayerLink o = gson.fromJson(e, PlayerLink.class);
@@ -37,7 +36,7 @@ public class PlayerLinkController {
     }
 
     public static boolean isDiscordLinked(String discordID) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return false;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         try {
             for (JsonElement e : getJson()) {
                 final PlayerLink o = gson.fromJson(e, PlayerLink.class);
@@ -53,7 +52,7 @@ public class PlayerLinkController {
 
     @Nullable
     public static UUID getPlayerFromDiscord(String discordID) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return null;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return null;
         try {
             for (JsonElement e : getJson()) {
                 final PlayerLink o = gson.fromJson(e, PlayerLink.class);
@@ -69,7 +68,7 @@ public class PlayerLinkController {
 
     @Nullable
     public static String getDiscordFromPlayer(UUID player) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return null;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return null;
         try {
             for (JsonElement e : getJson()) {
                 final PlayerLink o = gson.fromJson(e, PlayerLink.class);
@@ -84,7 +83,7 @@ public class PlayerLinkController {
     }
 
     public static PlayerSettings getSettings(String discordID, UUID player) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return null;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return null;
         if (player == null && discordID == null) throw new NullPointerException();
         else if (discordID == null) discordID = getDiscordFromPlayer(player);
         else if (player == null) player = getPlayerFromDiscord(discordID);
@@ -103,7 +102,7 @@ public class PlayerLinkController {
     }
 
     public static boolean linkPlayer(String discordID, UUID player) throws KeyAlreadyExistsException {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return false;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         if (isDiscordLinked(discordID) || isPlayerLinked(player)) throw new KeyAlreadyExistsException();
         try {
             if (PlayerLinkController.getNameFromUUID(player) == null) return false;
@@ -116,11 +115,9 @@ public class PlayerLinkController {
             if (ignoringMessages) discord_instance.ignoringPlayers.remove(player.toString());
             a.add(gson.toJsonTree(link));
             saveJSON(a);
-            for (DiscordEventHandler o : DiscordIntegration.eventHandlers) {
-                o.onPlayerLink(player, discordID);
-            }
+            //onPlayerLink is here
             final Guild guild = discord_instance.getChannel().getGuild();
-            final Role linkedRole = guild.getRoleById(Configuration.INSTANCE.linkedRole.get());
+            final Role linkedRole = guild.getRoleById("541757653932834827");
             final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(link.mcPlayerUUID))));
             if (!member.getRoles().contains(linkedRole))
                 guild.addRoleToMember(member, linkedRole).queue();
@@ -132,7 +129,7 @@ public class PlayerLinkController {
     }
 
     public static boolean updatePlayerSettings(String discordID, UUID player, PlayerSettings s) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return false;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         if (player == null && discordID == null) throw new NullPointerException();
         else if (discordID == null) discordID = getDiscordFromPlayer(player);
         else if (player == null) player = getPlayerFromDiscord(discordID);
@@ -166,7 +163,7 @@ public class PlayerLinkController {
     }
 
     public static boolean unlinkPlayer(String discordID, UUID player) {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return false;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         if (!isDiscordLinked(discordID) && !isPlayerLinked(player)) return false;
         try {
             for (JsonElement e : getJson()) {
@@ -178,7 +175,7 @@ public class PlayerLinkController {
                         gson.toJson(json, writer);
                     }
                     final Guild guild = discord_instance.getChannel().getGuild();
-                    final Role linkedRole = guild.getRoleById(Configuration.INSTANCE.linkedRole.get());
+                    final Role linkedRole = guild.getRoleById("541757653932834827");
                     final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(o.mcPlayerUUID))));
                     if (member.getRoles().contains(linkedRole))
                         guild.removeRoleFromMember(member, linkedRole).queue();
@@ -192,7 +189,7 @@ public class PlayerLinkController {
     }
 
     private static PlayerLink getUser(String discordID, UUID player) throws IOException {
-        if (!ServerLifecycleHooks.getCurrentServer().isServerInOnlineMode()) return null;
+        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return null;
         final JsonArray a = getJson();
         for (JsonElement e : a) {
             final PlayerLink l = gson.fromJson(e, PlayerLink.class);
@@ -232,7 +229,7 @@ public class PlayerLinkController {
 
     @Nullable
     public static String getNameFromUUID(UUID uuid) {
-        final String name = ServerLifecycleHooks.getCurrentServer().getMinecraftSessionService().fillProfileProperties(new GameProfile(uuid, ""), false).getName();
+        final String name = DimensionManager.getWorld(0).getMinecraftServer().getMinecraftSessionService().fillProfileProperties(new GameProfile(uuid, ""), false).getName();
         return name.isEmpty() ? null : name;
     }
 

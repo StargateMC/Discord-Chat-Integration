@@ -49,9 +49,9 @@ import static de.erdbeerbaerlp.dcintegration.Configuration.*;
 
 
 public class Discord implements EventListener {
-    private final JDA jda;
+    public final JDA jda;
     public boolean isKilled = false;
-    final ArrayList<String> ignoringPlayers = new ArrayList<>();
+    public ArrayList<String> ignoringPlayers = new ArrayList<>();
     /**
      * This thread is used to update the channel description
      */
