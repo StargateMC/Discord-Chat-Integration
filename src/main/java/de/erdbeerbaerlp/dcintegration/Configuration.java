@@ -118,6 +118,27 @@ public class Configuration {
         public String PLAYER_LEFT_MSG = "%player% left";
         @Comment({"PLACEHOLDERS:", "%player% - The player\u00B4s name", "%msg% - The death message"})
         public String PLAYER_DEATH_MSG = "%player% %msg%";
+        @Comment({"Message shown if a player  attempts to link but is already"})
+        public String LINK_ALREADY_LINKED = "You are already linked to %player%!";
+        @Comment({"Message shown if a player attempts to link and fails"})
+        public String LINK_FAILED = "Your code was not correct!";
+        @Comment({"Message shown if a player  attempts to link and suceeds"})
+        public String LINK_SUCCESS = "You are now linked to minecraft!";
+        @Comment({"Message shown if a player  attempts to link and its invalid"})
+        public String LINK_INVALID = "Your discord linking code is invalid!";
+        @Comment({"Message shown if a player  attempts to link and encounters an error"})
+        public String LINK_ERROR = "An error occured linking you. Please report the time this occured to the server administrator.";
+        @Comment({"Message shown if a player  attempts to run a discord command and fails because they arent linked"})
+        public String LINK_NOT_LINKED = "You're not linked to your minecraft account.\n%method%";
+        @Comment({"Message shown if a player tries to update their settings and fails"})
+        public String SETTINGS_UPDATE_FAILED = "You're not able to update your settings.";
+        @Comment({"Message shown if a player tries to update their settings and succeeds"})
+        public String SETTINGS_UPDATE_SUCCESS = "Settings updated successfully!";
+        @Comment({"Message shown if a player tries to update their settings and its invalid"})
+        public String SETTINGS_INVALID = "Setting %key% is invalid!";
+        @Comment({"Message shown if a player tries to update their settings and its invalid"})
+        public String SETTINGS_GET = "%bool%";
+        
         @Comment({"The message to print to discord when it was possible to detect a server crash", "Will also be used in the channel description"})
         public String SERVER_CRASHED_MSG = "Server Crash Detected :thinking:";
         @Comment({"This is what will be displayed ingame when someone types into the bot\u00B4s channel", "PLACEHOLDERS:", "%user% - The username", "%id% - The user ID", "%msg% - The Message"})
