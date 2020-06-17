@@ -345,6 +345,7 @@ public class DiscordIntegration
     public void playerJoin(PlayerLoggedInEvent ev) {
         if (discord_instance != null && !Configuration.MESSAGES.DISABLE_JOIN_LEAVE_MESSAGES)
             discord_instance.sendMessage(Configuration.MESSAGES.PLAYER_JOINED_MSG.replace("%player%", formatPlayerName(ev.player, false)));
+        try {
             final Guild guild = discord_instance.getChannel().getGuild();
             if (PlayerLinkController.isPlayerLinked(ev.player.getUniqueID())) {
                 Member m = guild.getMemberById(PlayerLinkController.getDiscordFromPlayer(ev.player.getUniqueID()));
@@ -359,6 +360,10 @@ public class DiscordIntegration
             } else {
                     ev.player.sendMessage(new TextComponentString(TextFormatting.RED + "Your MC account is not yet linked to Discord! Type /discord link to get started."));
             }
+        } catch (Exception e) {
+            ev.player.sendMessage(new TextComponentString(TextFormatting.RED + "Failed to validate your Discord nickname against your IGN. Please report this to Staff."));
+            e.printStackTrace();
+        }
     }
     
     @SubscribeEvent
