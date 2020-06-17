@@ -131,29 +131,6 @@ public class Discord implements EventListener {
                     for (int i : remove)
                         pendingLinks.remove(i);
                     sleep(/*GENERAL.DESCRIPTION_UPDATE_DELAY*/TimeUnit.MINUTES.toMillis(10));
-                    final Guild guild = getChannel().getGuild();
-                    for (PlayerLink l : PlayerLinkController.getAllLinks()) {
-                        Member m = guild.getMemberById(l.discordID);
-                        String name = PlayerLinkController.getNameFromUUID(UUID.fromString(l.mcPlayerUUID));
-                        if (m != null && name != null && !m.getNickname().equals(name)) {
-                                AuditableRestAction<Void> modifyNickname = m.modifyNickname(name);
-                                modifyNickname.complete();
-                                RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
-                                PrivateChannel complete = openPrivateChannel.complete();
-                                MessageAction sendMessage = complete.sendMessage("Your nickname on our discord server has been updated to " + name + ", which is what Mojang are reporting as your current IGN.");
-                                sendMessage.complete();
-                        } else {
-                            if (m == null || name == null) {
-                                PlayerLinkController.unlinkPlayer(l.discordID, UUID.fromString(l.mcPlayerUUID));
-                                if (m != null) {
-                                    RestAction<PrivateChannel> openPrivateChannel = m.getUser().openPrivateChannel();
-                                    PrivateChannel complete = openPrivateChannel.complete();
-                                    MessageAction sendMessage = complete.sendMessage("Your Discord account has been unlinked from your Minecraft one in-game, as the server can no longer resolve your UUID. You may re-link again in-game.");
-                                    sendMessage.complete();
-                                }
-                            }
-                        }
-                    }
                             
                 }
             } catch (InterruptedException | RuntimeException ignored) {
