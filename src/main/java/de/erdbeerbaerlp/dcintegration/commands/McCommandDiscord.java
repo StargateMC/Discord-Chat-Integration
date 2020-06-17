@@ -2,7 +2,7 @@ package de.erdbeerbaerlp.dcintegration.commands;
 
 import de.erdbeerbaerlp.dcintegration.Configuration;
 import de.erdbeerbaerlp.dcintegration.DiscordIntegration;
-import java.de.erdbeerbaerlp.dcintegration.linking.PlayerLinkController;
+import java.de.erdbeerbaerlp.dcintegration.linkhandlers.PlayerLinkController;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,8 +55,7 @@ public class McCommandDiscord implements ICommand
                     case "reload":
                         new Thread(() -> {
                             ConfigManager.sync(DiscordIntegration.MODID, Config.Type.INSTANCE);
-                            sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Config reloaded " + (DiscordIntegration.discord_instance
-                                    .restart() ? "and discord bot properly restarted" : (TextFormatting.RED + "but failed to properly restart the discord bot")) + "!"));
+                            sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Config reloaded " + (DiscordIntegration.discord_instance.restart() ? "and discord bot properly restarted" : (TextFormatting.RED + "but failed to properly restart the discord bot")) + "!"));
                         }).start();
                         return;
                     case "restart":

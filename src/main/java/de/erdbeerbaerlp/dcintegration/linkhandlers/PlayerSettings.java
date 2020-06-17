@@ -1,4 +1,4 @@
-package java.de.erdbeerbaerlp.dcintegration.linking;
+package java.de.erdbeerbaerlp.dcintegration.linkhandlers;
 
 public class PlayerSettings {
     public boolean useDiscordNameInChannel = true;
