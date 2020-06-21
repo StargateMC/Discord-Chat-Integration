@@ -130,6 +130,7 @@ public class Discord implements EventListener {
                     });
                     for (int i : remove)
                         pendingLinks.remove(i);
+                    DiscordIntegration.updateNicknames();
                     sleep(/*GENERAL.DESCRIPTION_UPDATE_DELAY*/TimeUnit.MINUTES.toMillis(10));
                             
                 }

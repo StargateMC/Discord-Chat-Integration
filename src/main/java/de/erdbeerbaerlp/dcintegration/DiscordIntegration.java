@@ -49,6 +49,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import static de.erdbeerbaerlp.dcintegration.Configuration.ADVANCED;
+import de.erdbeerbaerlp.dcintegration.links.PlayerLink;
 import de.erdbeerbaerlp.dcintegration.links.PlayerLinkController;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -344,31 +345,19 @@ public class DiscordIntegration
         }
     }
     
-    public static void updateNick(EntityPlayer player, boolean informOnDiscord, boolean informIngame) {
-        try {
+    public static void updateNicknames() {
+        for (PlayerLink link : PlayerLinkController.getAllLinks()) {
+            String name = PlayerLinkController.getNameFromUUID(UUID.fromString(link.mcPlayerUUID));
             final Guild guild = discord_instance.getChannel().getGuild();
-            if (PlayerLinkController.isPlayerLinked(player.getUniqueID())) {
-                Member m = guild.getMemberById(PlayerLinkController.getDiscordFromPlayer(player.getUniqueID()));
-                String name = PlayerLinkController.getNameFromUUID(player.getUniqueID());
-                if (!m.getNickname().equals(name)) {
-                    if (informIngame) player.sendMessage(new TextComponentString("Your nickname on StargateMC.com's discord server has been updated from " + m.getNickname() + " to " + name + "."));
+            Member m = guild.getMemberById(link.discordID);
+            if (m != null && name != null && !m.getNickname().equals(name)) {
                     AuditableRestAction<Void> modNick = m.modifyNickname(name);
                     modNick.complete();
-                    if (informOnDiscord) {
                     RestAction<PrivateChannel> pc = m.getUser().openPrivateChannel();
                     PrivateChannel privChannel = pc.complete();
                     MessageAction sendMessage = privChannel.sendMessage("Your nickname on StargateMC.com's discord server has been updated to " + name + ", to match your IGN.");
                     sendMessage.complete();
-                } else {
-                   if (informIngame) player.sendMessage(new TextComponentString("You are currently known on StargateMC.com's discord as " + m.getNickname() + "."));
-                }
-                }
-            } else {
-                if (informIngame) player.sendMessage(new TextComponentString(TextFormatting.RED + "Your MC account is not yet linked to Discord! Type /discord link to get started."));
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-            //player.sendMessage(new TextComponentString(TextFormatting.RED + "Unable to update your Discord Nickname. If you are not an admin, please report this to one."));            e.printStackTrace();
         }
     }
     
@@ -376,7 +365,6 @@ public class DiscordIntegration
     public void playerJoin(PlayerLoggedInEvent ev) {
         if (discord_instance != null && !Configuration.MESSAGES.DISABLE_JOIN_LEAVE_MESSAGES)
             discord_instance.sendMessage(Configuration.MESSAGES.PLAYER_JOINED_MSG.replace("%player%", formatPlayerName(ev.player, false)));
-        DiscordIntegration.updateNick(ev.player,true,true);
     }
     
     @SubscribeEvent
