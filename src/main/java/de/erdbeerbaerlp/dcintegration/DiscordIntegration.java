@@ -346,17 +346,40 @@ public class DiscordIntegration
     }
     
     public static void updateNicknames() {
+        System.out.println("Updating nicknames....");
         for (PlayerLink link : PlayerLinkController.getAllLinks()) {
+            System.out.println("Processing UUID: " + link.mcPlayerUUID + " and discord ID: " + link.discordID);
             String name = PlayerLinkController.getNameFromUUID(UUID.fromString(link.mcPlayerUUID));
             final Guild guild = discord_instance.getChannel().getGuild();
             Member m = guild.getMemberById(link.discordID);
-            if (m != null && name != null && !m.getNickname().equals(name)) {
-                    AuditableRestAction<Void> modNick = m.modifyNickname(name);
-                    modNick.complete();
-                    RestAction<PrivateChannel> pc = m.getUser().openPrivateChannel();
-                    PrivateChannel privChannel = pc.complete();
-                    MessageAction sendMessage = privChannel.sendMessage("Your nickname on StargateMC.com's discord server has been updated to " + name + ", to match your IGN.");
-                    sendMessage.complete();
+            if (guild.getOwner().getId().equals(m.getId())) {
+                    System.out.println("Not updating nickname for : " + link.discordID + " as they are the server owner!");
+            } else {
+                if (m != null && name != null && !m.getNickname().equals(name)) {
+                        String msg = "";
+                        try {
+                            AuditableRestAction<Void> modNick = m.modifyNickname(name);
+                            modNick.complete();
+                            msg = ("Your nickname on StargateMC.com's discord server has been updated to " + name + ", to match your IGN.");
+                            System.out.println("Successfully updated nick of discord ID: " + link.discordID + " to " + name);
+                        } catch (Exception e) {
+                            msg = ("Attempted to update your nickname, but failed due to: " + e.getMessage());
+                            System.out.println("Failed to update nick of discord ID: " + link.discordID + " to " + name);
+                            e.printStackTrace();
+                        }
+                        try {
+                            RestAction<PrivateChannel> pc = m.getUser().openPrivateChannel();
+                            PrivateChannel privChannel = pc.complete();
+                            MessageAction sendMessage = privChannel.sendMessage(msg);
+                            sendMessage.complete();
+                            System.out.println("Successfully messaged discord ID: " + link.discordID + " with the results of their nick change.");
+                        } catch (Exception e) {
+                            System.out.println("Failed to message discord ID: " + link.discordID + " with the results of their nick change.");
+                            e.printStackTrace();
+                        }
+                } else {
+                    System.out.println("Not updating nickname for : " + link.discordID + " as their nickname is the same or there is no discord user to update!");
+                }
             }
         }
     }
@@ -365,6 +388,7 @@ public class DiscordIntegration
     public void playerJoin(PlayerLoggedInEvent ev) {
         if (discord_instance != null && !Configuration.MESSAGES.DISABLE_JOIN_LEAVE_MESSAGES)
             discord_instance.sendMessage(Configuration.MESSAGES.PLAYER_JOINED_MSG.replace("%player%", formatPlayerName(ev.player, false)));
+            DiscordIntegration.updateNicknames();
     }
     
     @SubscribeEvent

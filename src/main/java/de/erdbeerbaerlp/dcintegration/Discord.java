@@ -519,6 +519,7 @@ public class Discord implements EventListener {
                                     if (linked) {
                                         ev.getChannel().sendMessage(Configuration.MESSAGES.LINK_SUCCESS.replace("%name%", PlayerLinkController.getNameFromUUID(PlayerLinkController.getPlayerFromDiscord(ev.getAuthor().getId())))).queue();
                                         DimensionManager.getWorld(0).getMinecraftServer().getPlayerList().getPlayerByUUID(pendingLinks.get(num).getValue()).sendMessage(new TextComponentString("Your account is now linked with " + ev.getAuthor().getAsTag()));
+                                        DiscordIntegration.updateNicknames();
                                     } else
                                         ev.getChannel().sendMessage(Configuration.MESSAGES.LINK_FAILED).queue();
                                 } else {
