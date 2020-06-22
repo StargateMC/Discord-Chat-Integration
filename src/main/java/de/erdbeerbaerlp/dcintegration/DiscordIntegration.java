@@ -355,7 +355,7 @@ public class DiscordIntegration
             if (guild.getOwner().getId().equals(m.getId())) {
                     System.out.println("Not updating nickname for : " + link.discordID + " as they are the server owner!");
             } else {
-                if (m != null && name != null && !m.getNickname().equals(name)) {
+                if (m != null && name != null && (m.getNickname() == null || !m.getNickname().equals(name))) {
                         String msg = "";
                         try {
                             AuditableRestAction<Void> modNick = m.modifyNickname(name);
