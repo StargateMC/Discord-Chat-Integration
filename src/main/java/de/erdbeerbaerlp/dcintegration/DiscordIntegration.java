@@ -421,7 +421,7 @@ public class DiscordIntegration
     
     @SubscribeEvent
     public void chat(ServerChatEvent ev) {
-        if (discord_instance != null) discord_instance.sendMessage(ev.getPlayer(), ev.getMessage().replace("@everyone", "[at]everyone").replace("@here", "[at]here"));
+       // if (discord_instance != null) discord_instance.sendMessage(ev.getPlayer(), ev.getMessage().replace("@everyone", "[at]everyone").replace("@here", "[at]here"));
     }
     
     @SubscribeEvent

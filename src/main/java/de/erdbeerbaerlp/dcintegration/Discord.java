@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import com.stargatemc.StargateMCMod;
+import com.stargatemc.api.CoreAPI;
+import com.stargatemc.channel.Channel;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -638,7 +641,7 @@ public class Discord implements EventListener {
                             sendMessage(Configuration.COMMANDS.MSG_UNKNOWN_COMMAND.replace("%prefix%", Configuration.COMMANDS.CMD_PREFIX), ev.getTextChannel());
                     }
 
-                } else if (ev.getChannel().getId().equals(ADVANCED.CHAT_INPUT_ID.isEmpty() ? getChannel().getId() : ADVANCED.CHAT_INPUT_ID)) {
+                } else {
                     final List<MessageEmbed> embeds = ev.getMessage().getEmbeds();
                     String msg = ev.getMessage().getContentRaw();
 
@@ -678,10 +681,12 @@ public class Discord implements EventListener {
                         deleteMessageById.complete();
                         return;
                     }
-                    sendMcMsg(ForgeHooks.newChatWithLinks(Configuration.MESSAGES.INGAME_DISCORD_MSG.replace("%user%", (ev.getMember() != null ? ev.getMember().getEffectiveName() : ev.getAuthor().getName()))
-                            .replace("%id%", ev.getAuthor().getId()).replace("%msg%", (Configuration.MESSAGES.PREVENT_MC_COLOR_CODES ? DiscordIntegration
-                                    .stripControlCodes(message.toString()) : message.toString())))
-                            .setStyle(new Style().setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponentString("Sent by discord user \"" + ev.getAuthor().getAsTag() + "\"")))));
+                    Channel channel = StargateMCMod.getChannelRegistry().getRegistered(ev.getChannel().getName().replace("-test","").replace("-live",""));
+                    if (channel != null && channel.isDiscordLinked()) {
+                        channel.receiveMessageFromDiscord(ev.getMember().getEffectiveName(), message.toString());
+                    } else {
+                        CoreAPI.logAudit("Failed to send chat message of: " + message.toString() + " from : " + ev.getAuthor().getName() + " to : " + ev.getChannel().getName(), true);
+                    }
                 }
             }
         }
