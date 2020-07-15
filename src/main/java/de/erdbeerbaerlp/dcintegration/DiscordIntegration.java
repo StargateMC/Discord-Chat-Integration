@@ -352,6 +352,10 @@ public class DiscordIntegration
             String name = PlayerLinkController.getNameFromUUID(UUID.fromString(link.mcPlayerUUID));
             final Guild guild = discord_instance.getChannel().getGuild();
             Member m = guild.getMemberById(link.discordID);
+            if (m == null) {
+                PlayerLinkController.unlinkPlayer(link.discordID, UUID.fromString(link.mcPlayerUUID));
+                continue;
+            }
             if (guild.getOwner().getId().equals(m.getId())) {
                     System.out.println("Not updating nickname for : " + link.discordID + " as they are the server owner!");
             } else {

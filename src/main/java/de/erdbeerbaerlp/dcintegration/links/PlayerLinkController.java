@@ -179,7 +179,7 @@ public class PlayerLinkController {
                     final Guild guild = discord_instance.getChannel().getGuild();
                     final Role linkedRole = guild.getRoleById(Configuration.LINKING.DISCORD_LINKED_ROLE_ID);
                     final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(o.mcPlayerUUID))));
-                    if (member.getRoles().contains(linkedRole))
+                    if (member != null && member.getRoles().contains(linkedRole))
                         guild.removeRoleFromMember(member, linkedRole).queue();
                     return true;
                 }
