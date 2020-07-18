@@ -38,8 +38,8 @@ public class PlayerLinkController {
     }
 
     public static boolean isDiscordLinked(String discordID) {
-        if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
         try {
+            if (!DimensionManager.getWorld(0).getMinecraftServer().isServerInOnlineMode()) return false;
             for (JsonElement e : getJson()) {
                 final PlayerLink o = gson.fromJson(e, PlayerLink.class);
                 if (!o.discordID.isEmpty() && o.discordID.equals(discordID)) {

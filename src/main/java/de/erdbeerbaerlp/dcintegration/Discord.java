@@ -681,7 +681,11 @@ public class Discord implements EventListener {
                         deleteMessageById.complete();
                         return;
                     }
-                    Channel channel = StargateMCMod.getChannelRegistry().getRegistered(ev.getChannel().getName().replace("-test","").replace("-live",""));
+                    String channelName = ev.getChannel().getName();
+                    if (ev.getChannel().equals(DiscordIntegration.discord_instance.getChannel())) {
+                        channelName = ev.getChannel().getName().replace("-test","").replace("-live","");
+                    }
+                    Channel channel = StargateMCMod.getChannelRegistry().getRegistered(channelName);
                     if (channel != null && channel.isDiscordLinked()) {
                         channel.receiveMessageFromDiscord(ev.getMember().getEffectiveName(), message.toString());
                     } else {
