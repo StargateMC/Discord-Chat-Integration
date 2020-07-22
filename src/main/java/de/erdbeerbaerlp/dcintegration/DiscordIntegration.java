@@ -345,19 +345,20 @@ public class DiscordIntegration
         }
     }
     
-    public static void updateNicknames() {
-        System.out.println("Updating nicknames....");
-        for (PlayerLink link : PlayerLinkController.getAllLinks()) {
-            System.out.println("Processing UUID: " + link.mcPlayerUUID + " and discord ID: " + link.discordID);
-            String name = PlayerLinkController.getNameFromUUID(UUID.fromString(link.mcPlayerUUID));
+    public static void updateNickname(EntityPlayer player) {
+        System.out.println("Updating nickname....");
+            String discordID = PlayerLinkController.getDiscordFromPlayer(player.getUniqueID());
+            System.out.println("Processing UUID: " + player.getUniqueID() + " and discord ID: " + discordID);
+            String name = PlayerLinkController.getNameFromUUID(UUID.fromString(player.getUniqueID()));
+            
             final Guild guild = discord_instance.getChannel().getGuild();
-            Member m = guild.getMemberById(link.discordID);
+            Member m = guild.getMemberById(discordID);
             if (m == null) {
-                PlayerLinkController.unlinkPlayer(link.discordID, UUID.fromString(link.mcPlayerUUID));
+                PlayerLinkController.unlinkPlayer(discordID, UUID.fromString(player.getUniqueID()));
                 continue;
             }
             if (guild.getOwner().getId().equals(m.getId())) {
-                    System.out.println("Not updating nickname for : " + link.discordID + " as they are the server owner!");
+                    System.out.println("Not updating nickname for : " + discordID + " as they are the server owner!");
             } else {
                 if (m != null && name != null && !m.getEffectiveName().equals(name)) {
                         String msg = "";
@@ -365,10 +366,10 @@ public class DiscordIntegration
                             AuditableRestAction<Void> modNick = m.modifyNickname(name);
                             modNick.complete();
                             msg = ("Your nickname on StargateMC.com's discord server has been updated to " + name + ", to match your IGN.");
-                            System.out.println("Successfully updated nick of discord ID: " + link.discordID + " to " + name);
+                            System.out.println("Successfully updated nick of discord ID: " + discordID + " to " + name);
                         } catch (Exception e) {
                             msg = ("Attempted to update your nickname, but failed due to: " + e.getMessage());
-                            System.out.println("Failed to update nick of discord ID: " + link.discordID + " to " + name);
+                            System.out.println("Failed to update nick of discord ID: " + discordID + " to " + name);
                             e.printStackTrace();
                         }
                         try {
@@ -376,23 +377,22 @@ public class DiscordIntegration
                             PrivateChannel privChannel = pc.complete();
                             MessageAction sendMessage = privChannel.sendMessage(msg);
                             sendMessage.complete();
-                            System.out.println("Successfully messaged discord ID: " + link.discordID + " with the results of their nick change.");
+                            System.out.println("Successfully messaged discord ID: " + discordID + " with the results of their nick change.");
                         } catch (Exception e) {
-                            System.out.println("Failed to message discord ID: " + link.discordID + " with the results of their nick change.");
+                            System.out.println("Failed to message discord ID: " + discordID + " with the results of their nick change.");
                             e.printStackTrace();
                         }
                 } else {
-                    System.out.println("Not updating nickname for : " + link.discordID + " as their nickname is the same or there is no discord user to update!");
+                    System.out.println("Not updating nickname for : " + discordID + " as their nickname is the same or there is no discord user to update!");
                 }
             }
-        }
     }
     
     @SubscribeEvent
     public void playerJoin(PlayerLoggedInEvent ev) {
         if (discord_instance != null && !Configuration.MESSAGES.DISABLE_JOIN_LEAVE_MESSAGES)
             discord_instance.sendMessage(Configuration.MESSAGES.PLAYER_JOINED_MSG.replace("%player%", formatPlayerName(ev.player, false)));
-            DiscordIntegration.updateNicknames();
+            DiscordIntegration.updateNickname(ev.player);
     }
     
     @SubscribeEvent
