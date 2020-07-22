@@ -345,17 +345,17 @@ public class DiscordIntegration
         }
     }
     
-    public static void updateNickname(EntityPlayer player) {
+    public static void updateNickname(UUID player) {
         System.out.println("Updating nickname....");
-            String discordID = PlayerLinkController.getDiscordFromPlayer(player.getUniqueID());
-            System.out.println("Processing UUID: " + player.getUniqueID() + " and discord ID: " + discordID);
-            String name = PlayerLinkController.getNameFromUUID(UUID.fromString(player.getUniqueID()));
+            String discordID = PlayerLinkController.getDiscordFromPlayer(player);
+            System.out.println("Processing UUID: " + player + " and discord ID: " + discordID);
+            String name = PlayerLinkController.getNameFromUUID(player);
             
             final Guild guild = discord_instance.getChannel().getGuild();
             Member m = guild.getMemberById(discordID);
             if (m == null) {
-                PlayerLinkController.unlinkPlayer(discordID, UUID.fromString(player.getUniqueID()));
-                continue;
+                PlayerLinkController.unlinkPlayer(discordID,player);
+                return;
             }
             if (guild.getOwner().getId().equals(m.getId())) {
                     System.out.println("Not updating nickname for : " + discordID + " as they are the server owner!");
@@ -392,7 +392,7 @@ public class DiscordIntegration
     public void playerJoin(PlayerLoggedInEvent ev) {
         if (discord_instance != null && !Configuration.MESSAGES.DISABLE_JOIN_LEAVE_MESSAGES)
             discord_instance.sendMessage(Configuration.MESSAGES.PLAYER_JOINED_MSG.replace("%player%", formatPlayerName(ev.player, false)));
-            DiscordIntegration.updateNickname(ev.player);
+            DiscordIntegration.updateNickname(ev.player.getUniqueID());
     }
     
     @SubscribeEvent

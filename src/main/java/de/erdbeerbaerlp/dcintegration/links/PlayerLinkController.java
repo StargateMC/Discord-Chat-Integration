@@ -121,6 +121,7 @@ public class PlayerLinkController {
             final Guild guild = discord_instance.getChannel().getGuild();
             final Role linkedRole = guild.getRoleById(Configuration.LINKING.DISCORD_LINKED_ROLE_ID);
             final Member member = guild.getMember(discord_instance.jda.getUserById(PlayerLinkController.getDiscordFromPlayer(UUID.fromString(link.mcPlayerUUID))));
+            DiscordIntegration.updateNickname(player);
             if (!member.getRoles().contains(linkedRole))
                 guild.addRoleToMember(member, linkedRole).queue();
             return true;
