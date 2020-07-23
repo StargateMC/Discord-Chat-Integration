@@ -346,6 +346,7 @@ public class DiscordIntegration
     }
     
     public static void updateNickname(UUID player) {
+        if (!PlayerLinkController.isPlayerLinked(player)) return;
         System.out.println("Updating nickname....");
             String discordID = PlayerLinkController.getDiscordFromPlayer(player);
             System.out.println("Processing UUID: " + player + " and discord ID: " + discordID);
