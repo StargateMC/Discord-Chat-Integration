@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.dcintegration;
 
 import club.minnced.discord.webhook.WebhookClient;
+import mod.gcewing.sg.util.StargateMCMap;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.feed_the_beast.ftblib.lib.data.Universe;
 import com.feed_the_beast.ftblib.lib.math.Ticks;
@@ -119,7 +120,8 @@ public class Discord implements EventListener {
                             .replace("%seconds%", DiscordIntegration.getUptimeSeconds() + "")
                             .replace("%minutes%", DiscordIntegration.getUptimeMinutes() + "")
                             .replace("%hours%", DiscordIntegration.getUptimeHours() + "")
-                            .replace("%days%", DiscordIntegration.getUptimeDays() + "");
+                            .replace("%days%", DiscordIntegration.getUptimeDays() + "")
+                            .replace("%stargates%", StargateMCMap.getAddressList().size() + "");
                     if (!newDesc.equals(cachedDescription)) {
                         (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? getChannelManager() : getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(newDesc).complete();
                         cachedDescription = newDesc;
@@ -237,7 +239,7 @@ public class Discord implements EventListener {
                     } else {
                         final boolean afk = timers.get(p).getKey() >= Ticks.get(FTBUtilitiesConfig.afk.notification_timer).millis();
                         if (afk && !timers.get(p).getValue())
-                            sendMessage(ADVANCED.FTB_UTILITIES_CHANNEL_ID.isEmpty() ? getChannel() : getChannel(ADVANCED.FTB_UTILITIES_CHANNEL_ID), Configuration.FTB_UTILITIES.DISCORD_AFK_MSG.replace("%player%", DiscordIntegration.formatPlayerName(p)), Configuration.FTB_UTILITIES.FTB_AVATAR_ICON,
+                            sendMessage(ADVANCED.FTB_UTILITIES_CHANNEL_ID.isEmpty() ? getChannel() : getChannel(ADVANCED.FTB_UTILITIES_CHANNEL_ID), Configuration.FTB_UTILITIES.DISCORD_AFK_MSG.replace("%player%", DiscordIntegration.formatPlayerName(p)).replace("FTB Utilities: ",""), Configuration.FTB_UTILITIES.FTB_AVATAR_ICON,
                                     "FTB " + "Utilities");
                         timers.put(p, new SimpleEntry<>(timers.get(p).getKey(), afk));
 
