@@ -108,6 +108,18 @@ public class Discord implements EventListener {
             return Math.min(1000.0 / getAverageTickCount(), 20);
         }
 
+        public long getTotalSpace() {
+        	File root = new File("/");
+        	long TotalSpaceGB = root.getTotalSpace()/1024/1024/1024;
+        	return TotalSpaceGB;
+        }
+        
+        public long getFreeSpace() {
+        	File root = new File("/");
+        	long freeSpaceGB = root.getUsableSpace()/1024/1024/1024;
+        	return freeSpaceGB;
+        }
+        
         public void run() {
             try {
                 while (true) {
@@ -121,6 +133,8 @@ public class Discord implements EventListener {
                             .replace("%minutes%", DiscordIntegration.getUptimeMinutes() + "")
                             .replace("%hours%", DiscordIntegration.getUptimeHours() + "")
                             .replace("%days%", DiscordIntegration.getUptimeDays() + "")
+                            .replace("%diskfree%", this.getFreeSpace()+ "")
+                            .replace("%disktotal%", this.getTotalSpace()+ "")
                             .replace("%stargates%", StargateMCMap.getAddressList().size() + "");
                     if (!newDesc.equals(cachedDescription)) {
                         (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? getChannelManager() : getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(newDesc).complete();
