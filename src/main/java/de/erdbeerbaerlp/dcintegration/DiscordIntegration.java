@@ -320,8 +320,8 @@ public class DiscordIntegration
                 cli.close();
             } else if (!Configuration.MESSAGES.SERVER_STOPPED_MSG.isEmpty())
                 discord_instance.getChannel().sendMessage(Configuration.MESSAGES.SERVER_STOPPED_MSG).complete();
-            if (Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
-                (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.CHANNEL_DESCRIPTION_OFFLINE).complete();
+            //if (Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
+                //(ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.CHANNEL_DESCRIPTION_OFFLINE).complete();
         }
         stopped = true;
     }
