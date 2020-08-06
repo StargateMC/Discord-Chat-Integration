@@ -337,8 +337,8 @@ public class DiscordIntegration
                 if (!discord_instance.isKilled) {
                     discord_instance.stopThreads();
                     discord_instance.sendMessage(Configuration.MESSAGES.SERVER_CRASHED_MSG);
-                    if (Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
-                        (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.SERVER_CRASHED_MSG).complete();
+//                    if (Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
+//                        (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.SERVER_CRASHED_MSG).queue();
                 }
             }
             discord_instance.kill();
