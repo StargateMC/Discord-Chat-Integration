@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.dcintegration;
 
 import club.minnced.discord.webhook.WebhookClient;
+import mrjake.aunis.util.RingMap;
 import mod.gcewing.sg.util.StargateMCMap;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.feed_the_beast.ftblib.lib.data.Universe;
@@ -135,6 +136,8 @@ public class Discord implements EventListener {
                             .replace("%days%", DiscordIntegration.getUptimeDays() + "")
                             .replace("%diskfree%", this.getFreeSpace()+ "")
                             .replace("%disktotal%", this.getTotalSpace()+ "")
+                            .replace("%ringnets%", RingMap.getNumberOfRingNets() + "")
+                            .replace("%ringplatforms%", RingMap.getNumberOfRingPlatforms() + "")
                             .replace("%stargates%", StargateMCMap.getAddressList().size() + "");
                     if (!newDesc.equals(cachedDescription)) {
                         (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? getChannelManager() : getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(newDesc).complete();
