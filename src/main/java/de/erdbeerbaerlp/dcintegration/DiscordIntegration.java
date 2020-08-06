@@ -222,8 +222,8 @@ public class DiscordIntegration
     public void init(FMLInitializationEvent ev) {
         if (discord_instance != null && !Configuration.WEBHOOK.BOT_WEBHOOK)
             this.startingMsg = discord_instance.sendMessageReturns(Configuration.MESSAGES.SERVER_STARTING_MSG);
-        if (discord_instance != null && Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
-            (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.CHANNEL_DESCRIPTION_STARTING).complete();
+//        if (discord_instance != null && Configuration.GENERAL.MODIFY_CHANNEL_DESCRIPTRION)
+//            (ADVANCED.CHANNEL_DESCRIPTION_ID.isEmpty() ? discord_instance.getChannelManager() : discord_instance.getChannelManager(ADVANCED.CHANNEL_DESCRIPTION_ID)).setTopic(Configuration.MESSAGES.CHANNEL_DESCRIPTION_STARTING).complete();
 
     }
     
